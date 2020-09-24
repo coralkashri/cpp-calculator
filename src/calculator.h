@@ -12,11 +12,11 @@
 #include <map>
 #include <boost/algorithm/string.hpp>
 
-#include "utilities/Translator.h"
+#include "utilities/translator.h"
 
 using namespace std;
 
-class Calculator {
+class calculator {
 private:
     int calculate_pow(std::vector<double> &numbers, std::vector<char> &methods);
     int calculate_plus_minus(std::vector<double> &numbers, std::vector<char> &methods);
@@ -28,7 +28,7 @@ private:
     vector<char> available_methods = {'+', '-', '/', '*', '^', '%', '(', ')', '!'};
 
 public:
-    Calculator();
+    calculator();
     double calculate_expression(const string &expression);
     void add_variable(string data);
 };

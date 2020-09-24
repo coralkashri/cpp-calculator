@@ -2,7 +2,7 @@
 // Created by Korel Kashri
 //
 
-#include "Translator.h"
+#include "translator.h"
 
 namespace Translator {
     std::string fix_expression(const std::string &expression) {

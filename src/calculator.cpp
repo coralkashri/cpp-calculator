@@ -2,9 +2,9 @@
 // Created by Korel Kashri
 //
 
-#include "Calculator.h"
+#include "calculator.h"
 
-int Calculator::calculate_pow(std::vector<double> &numbers, std::vector<char> &methods) {
+int calculator::calculate_pow(std::vector<double> &numbers, std::vector<char> &methods) {
     int i;
     double ans;
     for (i = 0; i < methods.size(); i++) {
@@ -20,7 +20,7 @@ int Calculator::calculate_pow(std::vector<double> &numbers, std::vector<char> &m
     }
 }
 
-int Calculator::calculate_plus_minus(std::vector<double> &numbers, std::vector<char> &methods) {
+int calculator::calculate_plus_minus(std::vector<double> &numbers, std::vector<char> &methods) {
     int i;
     double ans;
     for (i = 0; i < methods.size(); i++) {
@@ -50,7 +50,7 @@ int Calculator::calculate_plus_minus(std::vector<double> &numbers, std::vector<c
     return true;
 }
 
-int Calculator::calculate_mul_div(std::vector<double> &numbers, std::vector<char> &methods) {
+int calculator::calculate_mul_div(std::vector<double> &numbers, std::vector<char> &methods) {
     int i;
     double ans;
     for (i = 0; i < methods.size(); i++) {
@@ -88,7 +88,7 @@ int Calculator::calculate_mul_div(std::vector<double> &numbers, std::vector<char
     return true;
 }
 
-int Calculator::calculate_parenthesis(std::vector<double> &numbers, std::vector<char> &methods) {
+int calculator::calculate_parenthesis(std::vector<double> &numbers, std::vector<char> &methods) {
     int i, j;
     double ans;
     int IsFoundStart = 0;
@@ -156,10 +156,10 @@ int Calculator::calculate_parenthesis(std::vector<double> &numbers, std::vector<
     return 2;
 }
 
-Calculator::Calculator() {
+calculator::calculator() {
 }
 
-double Calculator::calculate_expression(const string &expression) {
+double calculator::calculate_expression(const string &expression) {
     Translator::Expression exp;
     try {
         string fixed_expression = Translator::fix_expression(expression);
@@ -176,7 +176,7 @@ double Calculator::calculate_expression(const string &expression) {
     return exp.numbers[0];
 }
 
-void Calculator::add_variable(string expression) {
+void calculator::add_variable(string expression) {
     std::vector<std::string> info;
     boost::split(info, expression, [](char c) { return c == '='; });
     variables[info[0]] = this->calculate_expression(info[1]);

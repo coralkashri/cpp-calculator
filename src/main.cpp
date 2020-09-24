@@ -2,7 +2,7 @@
 // Created by Korel Kashri
 //
 
-#include "Calculator.h"
+#include "calculator.h"
 
 using namespace std;
 
@@ -10,11 +10,11 @@ int main() {
     string expression;
     std::cout.unsetf(std::ios::floatfield);                // floatfield not set
     std::cout.precision(1000);
-    Calculator c;
+    calculator c;
     bool running = true;
     cout << "******************" << endl <<
             "**" << endl <<
-            "** Calculator" << endl <<
+            "** calculator" << endl <<
             "**" << endl <<
             "******************" << endl;
     cout << "To add new variable, use the syntax: ~varname=value" << endl;
