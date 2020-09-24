@@ -10,7 +10,6 @@
 #include <complex>
 #include <string>
 #include <bits/stdc++.h>
-#include "expression_data.h"
 
 class translator {
 public:

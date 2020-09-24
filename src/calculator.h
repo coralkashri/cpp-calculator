@@ -13,7 +13,6 @@
 #include <boost/algorithm/string.hpp>
 
 #include "utilities/translator.h"
-#include "utilities/expression_data.h"
 
 class calculator {
 public:
