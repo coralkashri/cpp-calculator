@@ -18,7 +18,7 @@ namespace translator {
     };
 
     std::string     fix_expression(const std::string &expression);
-    expression      convert_expression(std::string &expression_str, std::vector<char> &available_methods, std::map<std::string, double> &variables);
+    expression      process_expression(std::string &expression_str, std::vector<char> &available_methods, std::map<std::string, double> &variables);
     void            new_number_suspect(std::string &number, size_t &nomwnb, expression &exp, std::map<std::string, double> &vars);
 };
 

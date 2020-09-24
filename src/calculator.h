@@ -17,20 +17,19 @@
 using namespace std;
 
 class calculator {
+public:
+    calculator();
+    double calculate_expression(const string &expression);
+    void add_variable(string data);
+
 private:
     int calculate_pow(std::vector<double> &numbers, std::vector<char> &methods);
     int calculate_plus_minus(std::vector<double> &numbers, std::vector<char> &methods);
     int calculate_mul_div(std::vector<double> &numbers, std::vector<char> &methods);
     int calculate_parenthesis(std::vector<double> &numbers, std::vector<char> &methods);
-    int calculate_parenthesis1(std::vector<double> &numbers, std::vector<char> &methods);
 
     map<string, double> variables;
     vector<char> available_methods = {'+', '-', '/', '*', '^', '%', '(', ')', '!'};
-
-public:
-    calculator();
-    double calculate_expression(const string &expression);
-    void add_variable(string data);
 };
 
 

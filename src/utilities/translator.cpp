@@ -46,7 +46,7 @@ namespace translator {
         }
     }
 
-    expression convert_expression(std::string &expression_str, std::vector<char> &available_methods, std::map<std::string, double> &variables) {
+    expression process_expression(std::string &expression_str, std::vector<char> &available_methods, std::map<std::string, double> &variables) {
         expression exp;
         std::string current_part;
         size_t number_of_methods_without_number_between = 0;

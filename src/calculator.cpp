@@ -163,7 +163,7 @@ double calculator::calculate_expression(const string &expression) {
     translator::expression exp;
     try {
         string fixed_expression = translator::fix_expression(expression);
-        exp = translator::convert_expression(fixed_expression, available_methods, variables);
+        exp = translator::process_expression(fixed_expression, available_methods, variables);
         calculate_parenthesis(exp.numbers, exp.methods);
         calculate_pow(exp.numbers, exp.methods);
         calculate_mul_div(exp.numbers, exp.methods);

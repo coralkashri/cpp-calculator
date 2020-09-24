@@ -35,10 +35,8 @@ int main() {
                 cout << expression << " = " << c.calculate_expression(expression) << endl;
             } catch (std::exception &e) {
                 cerr << "Invalid syntax." << endl;
-                sleep(1);
             } catch (...) {
                 cerr << "Invalid syntax." << endl;
-                sleep(1);
             }
         }
     }
