@@ -1,6 +1,9 @@
-cmake_minimum_required(VERSION 3.12)
-project(Calculator)
+cmake_minimum_required(VERSION 3.17.3)
+set(PROJECT_NAME Calculator)
+project(${PROJECT_NAME})
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(Calculator src/main.cpp src/calculator.cpp src/calculator.h src/utilities/translator.cpp src/utilities/translator.h)
+file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/*")
+
+add_executable(${PROJECT_NAME} ${SOURCES} src/utilities/exceptions.h)

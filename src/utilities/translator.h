@@ -10,17 +10,16 @@
 #include <complex>
 #include <string>
 #include <bits/stdc++.h>
+#include "expression_data.h"
 
-namespace translator {
-    struct expression {
-        std::vector<double> numbers;
-        std::vector<char>   methods;
-    };
+class translator {
+public:
+    std::string fix_expression(const std::string &expression);
+    std::vector<std::string> process_expression(std::string &expression_str, std::vector<char> &available_methods, std::map<std::string, double> &variables);
+    bool validate_parentheses(const std::string &expression_str);
 
-    std::string     fix_expression(const std::string &expression);
-    expression      process_expression(std::string &expression_str, std::vector<char> &available_methods, std::map<std::string, double> &variables);
-    void            new_number_suspect(std::string &number, size_t &nomwnb, expression &exp, std::map<std::string, double> &vars);
+private:
+    bool new_number_suspect(std::string &number_str, bool is_positive_number, std::vector<std::string> &exp, std::map<std::string, double> &vars);
 };
-
 
 #endif //CALCULATOR_TRANSLATOR_H

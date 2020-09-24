@@ -3,181 +3,142 @@
 //
 
 #include "calculator.h"
-
-int calculator::calculate_pow(std::vector<double> &numbers, std::vector<char> &methods) {
-    int i;
-    double ans;
-    for (i = 0; i < methods.size(); i++) {
-        if (methods[i] == '^') {
-            if (numbers.size() < i + 2) {
-                throw runtime_error("Error..");
-            }
-            ans = pow(numbers[i], numbers[i + 1]);
-            numbers[i] = ans;
-            numbers.erase(numbers.begin() + i + 1);
-            methods.erase(methods.begin() + i);
-        }
-    }
-}
-
-int calculator::calculate_plus_minus(std::vector<double> &numbers, std::vector<char> &methods) {
-    int i;
-    double ans;
-    for (i = 0; i < methods.size(); i++) {
-        if (methods[i] == '+' || methods[i] == '-') {
-            if (numbers.size() < i + 2) {
-                throw runtime_error("Error..");
-            }
-            switch (methods[i]) {
-                case '+':
-                    ans = numbers[i] + numbers[i + 1];
-                    numbers.erase(numbers.begin() + i + 1);
-                    break;
-                case '-':
-                    if (numbers[i + 1] == 0) return false;
-                    ans = numbers[i] - numbers[i + 1];
-                    numbers.erase(numbers.begin() + i + 1);
-                    break;
-                default:
-                    ans = 0;
-                    break;
-            }
-            numbers[i] = ans;
-            methods.erase(methods.begin() + i);
-            i--;
-        }
-    }
-    return true;
-}
-
-int calculator::calculate_mul_div(std::vector<double> &numbers, std::vector<char> &methods) {
-    int i;
-    double ans;
-    for (i = 0; i < methods.size(); i++) {
-        if (methods[i] == '*' || methods[i] == '/' || methods[i] == '!' || methods[i] == '%') {
-            if (numbers.size() < i + 2) {
-                throw runtime_error("Error..");
-            }
-            switch (methods[i]) {
-                case '*':
-                    ans = numbers[i] * numbers[i + 1];
-                    numbers.erase(numbers.begin() + i + 1);
-                    break;
-                case '/':
-                    if (numbers[i + 1] == 0) return false;
-                    ans = numbers[i] / numbers[i + 1];
-                    numbers.erase(numbers.begin() + i + 1);
-                    break;
-                case '!':
-                    //ans = Atseret((int)E[i]);
-                    ans = 0;
-                    break;
-                case '%':
-                    ans = (int) numbers[i] % (int) numbers[i + 1];
-                    numbers.erase(numbers.begin() + i + 1);
-                    break;
-                default:
-                    ans = 0;
-                    break;
-            }
-            numbers[i] = ans;
-            methods.erase(methods.begin() + i);
-            i--;
-        }
-    }
-    return true;
-}
-
-int calculator::calculate_parenthesis(std::vector<double> &numbers, std::vector<char> &methods) {
-    int i, j;
-    double ans;
-    int IsFoundStart = 0;
-    vector<double> inner_level_nums;
-    vector<char> inner_level_methods;
-    for (i = 0; i < numbers.size() - 1; i++) {
-        if (IsFoundStart == 2 && methods[i] == ')') break;
-        if (methods[i] == '(') {
-            IsFoundStart = 1;
-            if (methods[i + 1] == ')') {
-                methods.erase(methods.begin() + i);
-                methods.erase(methods.begin() + i);
-                return 1;
-            }
-            methods.erase(methods.begin() + i);
-            for (j = i; j < methods.size(); j++) {
-                if (methods[j] == ')') {
-                    IsFoundStart = 2;
-                    methods.erase(methods.begin() + j);
-                    break;
-                }
-                if (inner_level_nums.empty()) {
-                    if (methods[j] == '(')
-                        calculate_parenthesis(numbers, methods);
-                    {
-                        inner_level_nums.push_back(numbers[j]);
-                        numbers.erase(numbers.begin() + j);
-                        inner_level_methods.push_back(methods[j]);
-                        methods.erase(methods.begin() + j);
-                    }
-                } else {
-                    if (methods[j] == '(')
-                        calculate_parenthesis(numbers, methods);
-                    {
-                        inner_level_methods.push_back(methods[j]);
-                        methods.erase(methods.begin() + j);
-                    }
-                }
-                if (methods[methods.size() - 1] != '(') {
-                    if (methods[j] == '(')
-                        calculate_parenthesis(numbers, methods);
-                    {
-                        inner_level_nums.push_back(numbers[j]);
-                        numbers.erase(numbers.begin() + j);
-                        j--;
-                    }
-                }
-            }
-            //if (nums.Count == methods.Count)
-            //    nums.Insert(0, 0.0);
-            try {
-                if (calculate_parenthesis(inner_level_nums, inner_level_methods) == 0) return 0;
-                calculate_pow(inner_level_nums, inner_level_methods);
-                if (!calculate_mul_div(inner_level_nums, inner_level_methods)) return 0;
-                calculate_plus_minus(inner_level_nums, inner_level_methods);
-                ans = inner_level_nums[0];
-                numbers.insert(numbers.begin() + i, ans);
-                inner_level_nums.clear();
-                inner_level_methods.clear();
-            } catch (...) {
-                throw runtime_error("Error..");
-            }
-        }
-    }
-    return 2;
-}
+#include "utilities/exceptions.h"
 
 calculator::calculator() {
+    variables["ans"] = 0;
 }
 
-double calculator::calculate_expression(const string &expression) {
-    translator::expression exp;
-    try {
-        string fixed_expression = translator::fix_expression(expression);
-        exp = translator::process_expression(fixed_expression, available_methods, variables);
-        calculate_parenthesis(exp.numbers, exp.methods);
-        calculate_pow(exp.numbers, exp.methods);
-        calculate_mul_div(exp.numbers, exp.methods);
-        calculate_plus_minus(exp.numbers, exp.methods);
-    } catch (std::runtime_error &e) {
-        throw runtime_error("Error occurred: Invalid expression.");
-    } catch (...) {
-        throw runtime_error("Error occurred: Invalid expression.");
-    }
-    return exp.numbers[0];
+double calculator::calculate_expression(const std::string &expression) {
+    std::vector<std::string> expr_data, postfix_expr_data;
+    double res;
+    translator t;
+    if (!t.validate_parentheses(expression)) throw wrong_parentheses_exception();
+    std::string fixed_expression = t.fix_expression(expression);
+    expr_data = t.process_expression(fixed_expression, available_methods, variables);
+    postfix_expr_data = convert_infix_to_postfix(expr_data);
+    res = resolve_postfix(postfix_expr_data);
+    variables["ans"] = res;
+    return res;
 }
 
-void calculator::add_variable(string expression) {
+void calculator::add_variable(const std::string &expression) {
     std::vector<std::string> info;
-    boost::split(info, expression, [](char c) { return c == '='; });
+    translator t;
+    std::string fixed_expression = t.fix_expression(expression);
+    boost::split(info, fixed_expression, [](char c) { return c == '='; });
     variables[info[0]] = this->calculate_expression(info[1]);
+}
+
+std::vector<std::string> calculator::convert_infix_to_postfix(const std::vector<std::string> &infix_expression) {
+    std::vector<std::string> postfix_expression;
+    std::vector<char> operators_stack;
+    for (auto &curr_elem : infix_expression) {
+        try { // Operand
+            postfix_expression.push_back(std::to_string(std::stod(curr_elem)));
+        } catch (std::invalid_argument &e) { // Not operand
+            if (curr_elem != ")") {
+                if (curr_elem != "(") { // Operator
+                    if (!operators_stack.empty()) {
+                        for (auto top = operators_stack.back(); !operators_stack.empty() && is_equal_or_higher_operator(curr_elem[0], top); top = operators_stack.back()) {
+                            operators_stack.pop_back();
+                            postfix_expression.emplace_back(std::string(1, top));
+                        }
+                    }
+                    operators_stack.push_back(curr_elem[0]);
+                } else { // Open parenthesis
+                    operators_stack.emplace_back('(');
+                }
+            } else { // Close parenthesis
+                for (auto top = operators_stack.back(); top != '('; top = operators_stack.back()) {
+                    operators_stack.pop_back();
+                    postfix_expression.emplace_back(std::string(1, top));
+                }
+                operators_stack.pop_back(); // Remove '('
+            }
+        }
+    }
+    if (!operators_stack.empty()) {
+        for (auto top = operators_stack.back(); !operators_stack.empty(); top = operators_stack.back()) {
+            operators_stack.pop_back();
+            postfix_expression.emplace_back(std::string(1, top));
+        }
+    }
+
+    return postfix_expression;
+}
+
+double calculator::resolve_postfix(const std::vector<std::string> &postfix_expression) {
+    std::vector<double> numbers_stack;
+    for (auto &curr : postfix_expression) {
+        try {
+            numbers_stack.push_back(std::stod(curr));
+        } catch (std::invalid_argument &e) {
+            auto n1 = numbers_stack.back();
+            numbers_stack.pop_back();
+            auto n2 = numbers_stack.back();
+            numbers_stack.pop_back();
+            numbers_stack.push_back(perform_operator_action(curr[0], n2, n1));
+        }
+    }
+    return numbers_stack.empty() ? 0 : numbers_stack.back();
+}
+
+bool calculator::is_equal_or_higher_operator(char op1, char op2) {
+    return std::find(available_methods.begin(), available_methods.end(), op1) >= std::find(available_methods.begin(), available_methods.end(), op2);
+}
+
+double calculator::perform_operator_action(char op, double n1, double n2) {
+    double res = 0;
+    if (op == '+') {
+        res = n1 + n2;
+    } else if (op == '-') {
+        res = n1 - n2;
+    } else if (op == '*') {
+        res = n1 * n2;
+    } else if (op == '/') {
+        res = n1 / n2;
+    } else if (op == '^') {
+        res = std::pow(n1, n2);
+    }
+    return res;
+}
+
+void calculator::start() {
+    std::string expression;
+    bool running = true;
+    std::cout << "******************\n" <<
+         "**\n" <<
+         "** calculator\n" <<
+         "**\n" <<
+         "******************\n";
+    std::cout << "To add new variable, use the syntax: ~varname=value\n";
+    std::cout << "<ans> variable will always hold the last calculated result.\n";
+    std::cout << "Press enter to calculate (you can use spaces between chars)." << std::endl;
+    while (running) {
+        std::cout << "Enter expression: ";
+        getline(std::cin, expression);
+        if (expression[0] == '~') {
+            std::string temp = expression.data() + 1;
+            try {
+                this->add_variable(temp);
+            } catch (std::invalid_argument &e) {
+                std::cerr << "Invalid syntax:" << std::endl;
+            }
+        } else {
+            try {
+                std::cout << expression << " = " << this->calculate_expression(expression) << std::endl;
+            } catch (illegal_expression_exception &e) {
+                std::cerr << "Error occurred: " << e.what() << std::endl;
+            } catch (variable_not_found_exception &e) {
+                std::cerr << "Error occurred: " << e.what() << std::endl;
+            } catch (wrong_parentheses_exception &e) {
+                std::cerr << "Error occurred: " << e.what() << std::endl;
+            } catch (std::exception &e) {
+                std::cerr << "Error occurred: " << e.what() << std::endl;
+            } catch (...) {
+                std::cerr << "Error occurred." << std::endl;
+            }
+        }
+    }
 }

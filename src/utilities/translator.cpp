@@ -3,86 +3,77 @@
 //
 
 #include "translator.h"
+#include "exceptions.h"
 
-namespace translator {
-    std::string fix_expression(const std::string &expression) {
-        std::string fixed_expression;
-        for (auto& c : expression) {
-            if (c != '=' && c != ' ') {
-                fixed_expression += c;
-            }
-        }
-        return fixed_expression;
-    }
-
-    void new_number_suspect(std::string &number, size_t &nomwnb, expression &exp, std::map<std::string, double> &vars) {
-        if (!number.empty()) {
-            try {
-                if (nomwnb == 2) {
-                    number = exp.methods[exp.methods.size() - 1] + number;
-                    exp.methods.pop_back();
-                }
-                exp.numbers.push_back(std::stod(number));
-            } catch (std::invalid_argument &e) { // The current part
-                auto it = vars.find(number);
-                if (it != vars.end()) { // If the current part is variable
-                    exp.numbers.push_back(it->second);
-                } else {
-                    if (number[0] == 'e') {
-                        try {
-                            std::string temp = number.data() + 1;
-                            int e_number = std::stoi(temp);
-                            exp.numbers.push_back(std::pow(10, e_number));
-                        } catch (std::runtime_error &e) {
-                            throw std::runtime_error("Can't find variable..");
-                        }
-                    } else {
-                        throw std::runtime_error("Can't find variable..");
-                    }
-                }
-            }
-            number = "";
-            nomwnb = 0;
+std::string translator::fix_expression(const std::string &expression) {
+    std::string fixed_expression;
+    for (auto& c : expression) {
+        if (c != ' ') {
+            fixed_expression += c;
         }
     }
+    return fixed_expression;
+}
 
-    expression process_expression(std::string &expression_str, std::vector<char> &available_methods, std::map<std::string, double> &variables) {
-        expression exp;
-        std::string current_part;
-        size_t number_of_methods_without_number_between = 0;
-        size_t i = 0;
-        for (auto& c : expression_str) {
-            if (std::find(available_methods.begin(), available_methods.end(), c) == available_methods.end()) {
-                current_part += c;
-            } else { // c is method and current_part is the part before this method
+bool translator::new_number_suspect(std::string &number_str, bool is_positive_number, std::vector<std::string> &exp, std::map<std::string, double> &vars) {
+    bool is_new_number = false;
+    if (!number_str.empty()) {
+        try {
+            char number_sign = is_positive_number ? '+' : '-';
+            exp.emplace_back(std::to_string(std::stod(number_sign + number_str))); // Try to enter a regular number
+            is_new_number = true;
+        } catch (std::invalid_argument &e) {
+            auto it = vars.find(number_str);
+            if (it != vars.end()) { // If the current part is variable
+                auto number = it->second;
+                if (!is_positive_number) number *= -1;
+                exp.push_back(std::to_string(number));
+                is_new_number = true;
+            }
+        }
+        number_str = "";
+    }
+    return is_new_number;
+}
 
-                new_number_suspect(current_part, number_of_methods_without_number_between, exp, variables);
-
-                exp.methods.push_back(c);
-                if (c != '(' && c != ')')
-                    number_of_methods_without_number_between++;
-                if (number_of_methods_without_number_between == 2)
-                {
-                    //if (c != '-' && c != '+') {
-                        if (i != 0)
-                            number_of_methods_without_number_between = 0;
-                        exp.numbers.push_back(0.0);
-                    //}
+std::vector<std::string> translator::process_expression(std::string &expression_str, std::vector<char> &available_methods, std::map<std::string, double> &variables) {
+    std::vector<std::string> exp;
+    std::string current_part;
+    bool is_positive_number = true;
+    bool is_magnitude_action = false;
+    for (auto &c : expression_str) {
+        if (std::find(available_methods.begin(), available_methods.end(), c) == available_methods.end()) {
+            current_part += c;
+        } else { // c is a method and current_part is the part before this method
+            if (current_part.empty()) { // A method without a number before
+                if (c == '-') { // Change the following number magnitude
+                    is_positive_number = !is_positive_number;
+                    is_magnitude_action = true; // Which means that there is no new method to record
+                } else if (c == '+') {
+                    is_magnitude_action = true; // Which means that there is no new method to record
+                } else if (c == ')' && is_magnitude_action) throw illegal_expression_exception(); // The parentheses ended with a series of '+' or '-' chars
+            } else {
+                if (new_number_suspect(current_part, is_positive_number, exp, variables)) {
+                    is_positive_number = true;
+                    is_magnitude_action = false;
                 }
             }
-            i++;
+            if (!is_magnitude_action) {
+                exp.emplace_back(std::string(1, c));
+            }
         }
-
-        // Add 0 in the beginning to solve the problem: (-1) + 2
-        i = 0;
-        if (expression_str[i] == '(') while (expression_str[i] == '(' || expression_str[i] == ')') i++;
-        std::string temp;
-        temp += expression_str[i];
-        if (std::find(available_methods.begin(), available_methods.end(), expression_str[i]) != available_methods.end()) {
-            exp.numbers.insert(exp.numbers.begin(), 0.0); // Probably Minus Or Plus sent this to here
-        }
-
-        new_number_suspect(current_part, number_of_methods_without_number_between, exp, variables);
-        return exp;
     }
+    if (!new_number_suspect(current_part, is_positive_number, exp, variables) && is_magnitude_action)
+        throw illegal_expression_exception(); // The expression ended with a series of '+' or '-' chars
+    return exp;
+}
+
+bool translator::validate_parentheses(const std::string &expression_str) {
+    int open_parentheses_count = 0;
+    for (auto &c : expression_str) {
+        if (c == '(') open_parentheses_count++;
+        if (c == ')') open_parentheses_count--;
+        if (open_parentheses_count < 0) break;
+    }
+    return !open_parentheses_count;
 }

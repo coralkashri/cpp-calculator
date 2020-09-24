@@ -13,24 +13,23 @@
 #include <boost/algorithm/string.hpp>
 
 #include "utilities/translator.h"
-
-using namespace std;
+#include "utilities/expression_data.h"
 
 class calculator {
 public:
     calculator();
-    double calculate_expression(const string &expression);
-    void add_variable(string data);
+    void start();
+    double calculate_expression(const std::string &expression);
+    void add_variable(const std::string &expression);
 
 private:
-    int calculate_pow(std::vector<double> &numbers, std::vector<char> &methods);
-    int calculate_plus_minus(std::vector<double> &numbers, std::vector<char> &methods);
-    int calculate_mul_div(std::vector<double> &numbers, std::vector<char> &methods);
-    int calculate_parenthesis(std::vector<double> &numbers, std::vector<char> &methods);
+    std::vector<std::string> convert_infix_to_postfix(const std::vector<std::string> &infix_expression);
+    double resolve_postfix(const std::vector<std::string> &postfix_expression);
+    bool is_equal_or_higher_operator(char op1, char op2);
+    double perform_operator_action(char op, double n1, double n2);
 
-    map<string, double> variables;
-    vector<char> available_methods = {'+', '-', '/', '*', '^', '%', '(', ')', '!'};
+    std::map<std::string, double> variables;
+    std::vector<char> available_methods = {'+', '-', '/', '*', '%', '^', '(', ')', '!'};
 };
-
 
 #endif //CALCULATOR_CALCULATOR_H
