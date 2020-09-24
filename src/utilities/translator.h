@@ -11,15 +11,15 @@
 #include <string>
 #include <bits/stdc++.h>
 
-namespace Translator {
-    struct Expression {
+namespace translator {
+    struct expression {
         std::vector<double> numbers;
         std::vector<char>   methods;
     };
 
     std::string     fix_expression(const std::string &expression);
-    Expression      convert_expression(std::string &expression, std::vector<char> &available_methods, std::map<std::string, double> &variables);
-    void            new_number_suspect(std::string &number, size_t &nomwnb, Expression &exp, std::map<std::string, double> &vars);
+    expression      convert_expression(std::string &expression, std::vector<char> &available_methods, std::map<std::string, double> &variables);
+    void            new_number_suspect(std::string &number, size_t &nomwnb, expression &exp, std::map<std::string, double> &vars);
 };
 
 

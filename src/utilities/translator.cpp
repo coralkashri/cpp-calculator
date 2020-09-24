@@ -4,7 +4,7 @@
 
 #include "translator.h"
 
-namespace Translator {
+namespace translator {
     std::string fix_expression(const std::string &expression) {
         std::string fixed_expression;
         for (auto& c : expression) {
@@ -15,7 +15,7 @@ namespace Translator {
         return fixed_expression;
     }
 
-    void new_number_suspect(std::string &number, size_t &nomwnb, Expression &exp, std::map<std::string, double> &vars) {
+    void new_number_suspect(std::string &number, size_t &nomwnb, expression &exp, std::map<std::string, double> &vars) {
         if (!number.empty()) {
             try {
                 if (nomwnb == 2) {
@@ -46,8 +46,8 @@ namespace Translator {
         }
     }
 
-    Expression convert_expression(std::string &expression, std::vector<char> &available_methods, std::map<std::string, double> &variables) {
-        Expression exp;
+    expression convert_expression(std::string &expression, std::vector<char> &available_methods, std::map<std::string, double> &variables) {
+        expression exp;
         std::string current_part;
         size_t number_of_methods_without_number_between = 0;
         size_t i = 0;

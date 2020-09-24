@@ -160,10 +160,10 @@ calculator::calculator() {
 }
 
 double calculator::calculate_expression(const string &expression) {
-    Translator::Expression exp;
+    translator::expression exp;
     try {
-        string fixed_expression = Translator::fix_expression(expression);
-        exp = Translator::convert_expression(fixed_expression, available_methods, variables);
+        string fixed_expression = translator::fix_expression(expression);
+        exp = translator::convert_expression(fixed_expression, available_methods, variables);
         calculate_parenthesis(exp.numbers, exp.methods);
         calculate_pow(exp.numbers, exp.methods);
         calculate_mul_div(exp.numbers, exp.methods);
