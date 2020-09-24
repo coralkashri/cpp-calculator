@@ -46,12 +46,12 @@ namespace translator {
         }
     }
 
-    expression convert_expression(std::string &expression, std::vector<char> &available_methods, std::map<std::string, double> &variables) {
+    expression convert_expression(std::string &expression_str, std::vector<char> &available_methods, std::map<std::string, double> &variables) {
         expression exp;
         std::string current_part;
         size_t number_of_methods_without_number_between = 0;
         size_t i = 0;
-        for (auto& c : expression) {
+        for (auto& c : expression_str) {
             if (std::find(available_methods.begin(), available_methods.end(), c) == available_methods.end()) {
                 current_part += c;
             } else { // c is method and current_part is the part before this method
@@ -75,10 +75,10 @@ namespace translator {
 
         // Add 0 in the beginning to solve the problem: (-1) + 2
         i = 0;
-        if (expression[i] == '(') while (expression[i] == '(' || expression[i] == ')') i++;
+        if (expression_str[i] == '(') while (expression_str[i] == '(' || expression_str[i] == ')') i++;
         std::string temp;
-        temp += expression[i];
-        if (std::find(available_methods.begin(), available_methods.end(), expression[i]) != available_methods.end()) {
+        temp += expression_str[i];
+        if (std::find(available_methods.begin(), available_methods.end(), expression_str[i]) != available_methods.end()) {
             exp.numbers.insert(exp.numbers.begin(), 0.0); // Probably Minus Or Plus sent this to here
         }
 
