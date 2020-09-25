@@ -52,6 +52,7 @@ std::vector<std::string> translator::process_expression(std::string &expression_
                 } else if (c == '+') {
                     is_magnitude_action = true; // Which means that there is no new method to record
                 } else if (c == ')' && is_magnitude_action) throw illegal_expression_exception(); // The parentheses ended with a series of '+' or '-' chars
+                if (exp.back() != ")" && !std::set{'-', '+', '(', ')'}.contains(c)) throw illegal_expression_exception(); // If the previous char wasn't a parenthesis and the current char is not in {'-', '+', '(', ')'} throw exception
             } else {
                 if (new_number_suspect(current_part, is_positive_number, exp, variables)) {
                     is_positive_number = true;

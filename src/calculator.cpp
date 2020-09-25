@@ -4,6 +4,7 @@
 
 #include "calculator.h"
 #include "utilities/exceptions.h"
+#include "utilities/designer.h"
 
 calculator::calculator() {
     variables["ans"] = 0;
@@ -128,16 +129,10 @@ void calculator::start() {
         } else {
             try {
                 std::cout << expression << " = " << this->calculate_expression(expression) << std::endl;
-            } catch (illegal_expression_exception &e) {
-                std::cerr << "Error occurred: " << e.what() << std::endl;
-            } catch (variable_not_found_exception &e) {
-                std::cerr << "Error occurred: " << e.what() << std::endl;
-            } catch (wrong_parentheses_exception &e) {
-                std::cerr << "Error occurred: " << e.what() << std::endl;
             } catch (std::exception &e) {
-                std::cerr << "Error occurred: " << e.what() << std::endl;
+                std::cout << designer::make_colored(std::stringstream() << "Error occurred: " << e.what(), designer::color::RED, true) << std::endl;
             } catch (...) {
-                std::cerr << "Error occurred." << std::endl;
+                std::cout << designer::make_colored("Error occurred.", designer::color::RED, true) << std::endl;
             }
         }
     }
