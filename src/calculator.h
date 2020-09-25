@@ -28,7 +28,7 @@ private:
     double perform_operator_action(char op, double n1, double n2);
 
     std::map<std::string, double> variables;
-    std::vector<char> available_methods = {'+', '-', '/', '*', '%', '^', '(', ')', '!'};
+    std::vector<char> available_methods = {'(', ')', '+', '-', '/', '*', '%', '^', '!'};
 };
 
 #endif //CALCULATOR_CALCULATOR_H

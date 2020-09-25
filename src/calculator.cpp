@@ -41,7 +41,7 @@ std::vector<std::string> calculator::convert_infix_to_postfix(const std::vector<
             if (curr_elem != ")") {
                 if (curr_elem != "(") { // Operator
                     if (!operators_stack.empty()) {
-                        for (auto top = operators_stack.back(); !operators_stack.empty() && is_equal_or_higher_operator(curr_elem[0], top); top = operators_stack.back()) {
+                        for (auto top = operators_stack.back(); !operators_stack.empty() && is_equal_or_higher_operator(top, curr_elem[0]); top = operators_stack.back()) {
                             operators_stack.pop_back();
                             postfix_expression.emplace_back(std::string(1, top));
                         }

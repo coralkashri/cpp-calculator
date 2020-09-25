@@ -45,14 +45,14 @@ std::vector<std::string> translator::process_expression(std::string &expression_
         if (std::find(available_methods.begin(), available_methods.end(), c) == available_methods.end()) {
             current_part += c;
         } else { // c is a method and current_part is the part before this method
-            if (current_part.empty()) { // A method without a number before
+            if (current_part.empty() && !exp.empty() && exp.back() != ")") { // A method without a number before
                 if (c == '-') { // Change the following number magnitude
                     is_positive_number = !is_positive_number;
                     is_magnitude_action = true; // Which means that there is no new method to record
                 } else if (c == '+') {
                     is_magnitude_action = true; // Which means that there is no new method to record
                 } else if (c == ')' && is_magnitude_action) throw illegal_expression_exception(); // The parentheses ended with a series of '+' or '-' chars
-                if (exp.back() != ")" && !std::set{'-', '+', '(', ')'}.contains(c)) throw illegal_expression_exception(); // If the previous char wasn't a parenthesis and the current char is not in {'-', '+', '(', ')'} throw exception
+                if (!std::set{'-', '+', '(', ')'}.contains(c)) throw illegal_expression_exception(); // If the previous char wasn't a parenthesis and the current char is not in {'-', '+', '(', ')'} throw exception
             } else {
                 if (new_number_suspect(current_part, is_positive_number, exp, variables)) {
                     is_positive_number = true;
