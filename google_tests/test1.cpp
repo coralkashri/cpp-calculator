@@ -36,6 +36,18 @@ TEST(RegularTest, NegativeNumber) {
     EXPECT_EQ(calc.calculate_expression("-50"), -50);
 }
 
+TEST(RegularTest, Test1) {
+    calculator calc;
+    EXPECT_EQ(calc.calculate_expression("+1-2"), +1-2);
+    EXPECT_EQ(calc.calculate_expression("-1-2"), -1-2);
+    EXPECT_EQ(calc.calculate_expression("1-2"), 1-2);
+    EXPECT_EQ(calc.calculate_expression("1++2"), 1+2);
+    EXPECT_EQ(calc.calculate_expression("1+-2"), 1+-2);
+    EXPECT_EQ(calc.calculate_expression("-1+-2"), -1+-2);
+    EXPECT_EQ(calc.calculate_expression("----1+-+-2"), 1+2);
+    EXPECT_EQ(calc.calculate_expression("-----1+--+-2"), -1-2);
+}
+
 TEST(VariablesTest, Test1) {
     calculator calc;
     EXPECT_EQ(calc.calculate_expression("-50"), -50);
@@ -50,10 +62,22 @@ TEST(VariablesTest, Test2) {
 
 TEST(VariablesTest, Test3) {
     calculator calc;
-    calc.add_variable("my_var =  6 + 9 * 2");
+    calc.set_variable("my_var =  6 + 9 * 2");
     auto my_var = 6 + 9 * 2;
     EXPECT_EQ(calc.calculate_expression("my_var"), my_var);
     auto ans = my_var * (2 + 6) * std::pow(2, 3);
     EXPECT_EQ(calc.calculate_expression("my_var * (2 + 6) * 2 ^ 3"), ans);
     EXPECT_EQ(calc.calculate_expression("ans * my_var"), ans * my_var);
+}
+
+TEST(VariablesTest, Test4) {
+    calculator calc;
+    calc.set_variable("my_var =  6 + 9 * 2");
+    auto my_var = 6 + 9 * 2;
+    calc.set_variable("my_var =  my_var + 1");
+    my_var++;
+    EXPECT_EQ(calc.calculate_expression("my_var"), my_var);
+    auto ans = my_var * (2 + 6) * std::pow(2, 3);
+    EXPECT_EQ(calc.calculate_expression("my_var * (2 + 6) * 2 ^ 3"), ans);
+    EXPECT_EQ(calc.calculate_expression("ans * (my_var + 1)"), ans * (my_var + 1));
 }

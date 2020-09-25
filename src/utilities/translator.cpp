@@ -29,7 +29,7 @@ bool translator::new_number_suspect(std::string &number_str, bool is_positive_nu
                 if (!is_positive_number) number *= -1;
                 exp.push_back(std::to_string(number));
                 is_new_number = true;
-            }
+            } else throw variable_not_found_exception();
         }
         number_str = "";
     }
@@ -46,8 +46,8 @@ std::vector<std::string> translator::process_expression(std::string &expression_
             current_part += c;
         } else { // c is a method and current_part is the part before this method
             if (current_part.empty()) { // A method without a number before
-                if (c == '-' && (exp.empty() || exp.back() != ")")) { // Change the following number magnitude
-                    is_positive_number = !is_positive_number;
+                if ((c == '-' || c == '+') && (exp.empty() || exp.back() != ")")) { // Change the following number magnitude
+                    is_positive_number = (c == '-') ? !is_positive_number : is_positive_number;
                     is_magnitude_action = true; // Which means that there is no new method to record
                 } else if (!exp.empty() && exp.back() != ")") {
                     if (c == '+') {

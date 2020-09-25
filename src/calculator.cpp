@@ -23,11 +23,12 @@ double calculator::calculate_expression(const std::string &expression) {
     return res;
 }
 
-void calculator::add_variable(const std::string &expression) {
+void calculator::set_variable(const std::string &expression) {
     std::vector<std::string> info;
     translator t;
     std::string fixed_expression = t.fix_expression(expression);
     boost::split(info, fixed_expression, [](char c) { return c == '='; });
+    if (info.size() == 1) throw illegal_expression_exception();
     variables[info[0]] = this->calculate_expression(info[1]);
 }
 
@@ -101,6 +102,8 @@ double calculator::perform_operator_action(char op, double n1, double n2) {
         res = n1 / n2;
     } else if (op == '^') {
         res = std::pow(n1, n2);
+    } else if (op == '%') {
+        res = (size_t)n1 % (size_t)n2;
     }
     return res;
 }
@@ -109,31 +112,28 @@ void calculator::start() {
     std::string expression;
     bool running = true;
     std::cout << "******************\n" <<
-         "**\n" <<
-         "** Calculator\n" <<
-         "**\n" <<
-         "******************\n";
+              "**\n" <<
+              "** Calculator\n" <<
+              "**\n" <<
+              "******************\n";
     std::cout << "To add new variable, use the syntax: ~varname=value\n";
     std::cout << "<ans> variable will always hold the last calculated result.\n";
     std::cout << "Press enter to calculate (you can use spaces between chars)." << std::endl;
     while (running) {
         std::cout << "Enter expression: ";
         getline(std::cin, expression);
-        if (expression[0] == '~') {
-            std::string temp = expression.data() + 1;
-            try {
-                this->add_variable(temp);
-            } catch (std::invalid_argument &e) {
-                std::cerr << "Invalid syntax:" << std::endl;
-            }
-        } else {
-            try {
+        try {
+            if (expression[0] == '~') {
+                if (expression.size() == 1) throw std::runtime_error("Variable assignment missing.");
+                std::string temp = expression.data() + 1;
+                this->set_variable(temp);
+            } else {
                 std::cout << expression << " = " << this->calculate_expression(expression) << std::endl;
-            } catch (std::exception &e) {
-                std::cout << designer::make_colored(std::stringstream() << "Error occurred: " << e.what(), designer::color::RED, true) << std::endl;
-            } catch (...) {
-                std::cout << designer::make_colored("Error occurred.", designer::color::RED, true) << std::endl;
             }
+        } catch (std::exception &e) {
+            std::cout << designer::make_colored(std::stringstream() << "Error occurred: " << e.what(), designer::color::RED, true) << std::endl;
+        } catch (...) {
+            std::cout << designer::make_colored("Error occurred.", designer::color::RED, true) << std::endl;
         }
     }
 }

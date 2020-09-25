@@ -19,7 +19,7 @@ public:
     calculator();
     void start();
     double calculate_expression(const std::string &expression);
-    void add_variable(const std::string &expression);
+    void set_variable(const std::string &expression);
 
 private:
     std::vector<std::string> convert_infix_to_postfix(const std::vector<std::string> &infix_expression);
