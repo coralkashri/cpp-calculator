@@ -110,7 +110,7 @@ void calculator::start() {
     bool running = true;
     std::cout << "******************\n" <<
          "**\n" <<
-         "** calculator\n" <<
+         "** Calculator\n" <<
          "**\n" <<
          "******************\n";
     std::cout << "To add new variable, use the syntax: ~varname=value\n";
