@@ -12,7 +12,7 @@
 #include <map>
 #include <boost/algorithm/string.hpp>
 
-#include "utilities/translator.h"
+#include "translator.h"
 
 class calculator {
 public:

@@ -12,6 +12,6 @@ file(GLOB_RECURSE UTILITIES RELATIVE ${CMAKE_SOURCE_DIR} "src/utilities/*")
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-add_executable(Google_Tests_run src/calculator.cpp src/calculator.h ${UTILITIES}  google_tests/test1.cpp)
+add_executable(Google_Tests_run src/calculator.cpp src/calculator.h src/translator.cpp src/translator.h ${UTILITIES}  google_tests/test1.cpp)
 
 target_link_libraries(Google_Tests_run gtest gtest_main)

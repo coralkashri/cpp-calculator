@@ -3,7 +3,7 @@
 //
 
 #include "translator.h"
-#include "exceptions.h"
+#include "utilities/exceptions.h"
 
 std::string translator::fix_expression(const std::string &expression) {
     std::string fixed_expression;
